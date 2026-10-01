@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CODEX BORÉAL v6.0 - Édition Ultime Intégrale</title>
+  <style>
+    :root {
+      --bg-primary: #0d0f12;
+      --bg-secondary: #14171f;
+      --bg-card: #1b1f2b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border: #282e3d;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --purple: #8b5cf6;
+      --craft: #ec4899;
+      --orange: #f97316;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    html, body { background-color: var(--bg-primary); color: var(--text-main); line-height: 1.6; padding-bottom: 50px; min-height: 100vh; overflow-y: auto; }
+
+    header { background-color: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 1rem; position: sticky; top: 0; z-index: 100; }
+    .header-container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+    @media (min-width: 768px) {
+      .header-container { flex-direction: row; justify-content: space-between; align-items: center; }
+    }
+    h1 { font-size: 1.3rem; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .badge { background: var(--orange); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; font-weight: bold; }
+
+    .search-box { width: 100%; max-width: 500px; }
+    .search-box input { width: 100%; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-primary); color: white; outline: none; font-size: 0.9rem; }
+    .search-box input:focus { border-color: var(--accent); }
+
+    nav { background-color: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; max-width: 1400px; margin: 0 auto; -webkit-overflow-scrolling: touch; }
+    nav button { background: none; border: none; color: var(--text-muted); padding: 14px 20px; cursor: pointer; font-weight: 600; font-size: 0.88rem; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.2s; }
+    nav button.active { color: var(--orange); border-bottom-color: var(--orange); background: rgba(249, 115, 22, 0.08); }
+
+    main { max-width: 1400px; margin: 25px auto; padding: 0 15px; }
+
+    .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    @media (min-width: 850px) { .grid { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); } }
+
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 22px; height: auto; }
+    .card h2 { font-size: 1.15rem; color: #fff; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .card h3 { font-size: 0.95rem; color: var(--orange); margin: 14px 0 6px 0; }
+    .card p, .card li { font-size: 0.88rem; color: var(--text-muted); }
+    .card ul, .card ol { padding-left: 20px; margin-bottom: 12px; }
+    .card li { margin-bottom: 4px; }
+
+    .svg-container { background: var(--bg-primary); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin: 12px 0; display: flex; justify-content: center; align-items: center; min-height: 160px; }
+    .svg-container svg { max-width: 100%; height: auto; }
+
+    .step-box { background: rgba(249, 115, 22, 0.05); border-left: 3px solid var(--orange); padding: 10px 14px; margin: 8px 0; border-radius: 0 4px 4px 0; }
+    .step-box strong { color: #fff; font-size: 0.9rem; }
+
+    .calc-form { display: flex; flex-direction: column; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group label { font-size: 0.85rem; color: var(--text-muted); }
+    .form-group input, .form-group select { padding: 9px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-primary); color: white; font-size: 0.9rem; }
+    .result-box { background: var(--bg-primary); border: 1px solid var(--accent); border-radius: 6px; padding: 14px; margin-top: 10px; }
+    .result-item { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 6px; }
+    .result-value { font-weight: bold; color: var(--accent); }
+
+    .tag-group { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag { display: inline-block; background: var(--border); color: var(--text-main); font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; }
+    .tag-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+    .tag-success { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success); }
+    .tag-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); }
+    .tag-purple { background: rgba(139, 92, 246, 0.2); color: var(--purple); border: 1px solid var(--purple); }
+    .tag-craft { background: rgba(236, 72, 153, 0.2); color: var(--craft); border: 1px solid var(--craft); }
+    .tag-orange { background: rgba(249, 115, 22, 0.2); color: var(--orange); border: 1px solid var(--orange); }
+
+    /* CORRECTION DÉFILEMENT TABLEAU FLORE */
+    .table-container { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 6px; border: 1px solid var(--border); -webkit-overflow-scrolling: touch; }
+    table { width: 100%; min-width: 750px; border-collapse: collapse; font-size: 0.88rem; }
+    th, td { border: 1px solid var(--border); padding: 10px; text-align: left; vertical-align: top; }
+    th { background: var(--bg-secondary); color: var(--text-main); font-weight: 600; }
+
+    .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+    .filter-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
+    .filter-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <h1>CODEX BORÉAL <span class="badge">v6.0 ULTIME</span></h1>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Rechercher (ex: fer, cabane, potasse, arc, chaga, saule, distillation)..." onkeyup="filterContent()">
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="switchTab('artisanat-modeste')">🏕️ Survie & Abri</button>
+    <button class="nav-btn" onclick="switchTab('metallurgie-craft')">⚒️ Métallurgie & Céramique</button>
+    <button class="nav-btn" onclick="switchTab('flore-master')">🌿 Grand Répertoire Flore</button>
+    <button class="nav-btn" onclick="switchTab('galerie-botanique')">🔍 Galerie d'Identification</button>
+    <button class="nav-btn" onclick="switchTab('modules-chimie')">🧪 Distillation & Chimie</button>
+    <button class="nav-btn" onclick="switchTab('calcs')">🧮 Calculateurs</button>
+    <button class="nav-btn" onclick="switchTab('medical')">⚕️ Traité Médical</button>
+  </nav>
+
+  <main>
+
+    <!-- TAB 1 : SURVIE & ARTISANAT MODESTE -->
+    <section id="artisanat-modeste" class="tab-content">
+      <div class="grid">
+
+        <!-- CABANE 4 SAISONS -->
+        <div class="card searchable">
+          <h2>1. Construction d'une Cabane Isolée (4 Saisons)</h2>
+          <p>Abri autonome haute efficacité thermique conçu pour supporter $-30^\circ\text{C}$ et le poids de la neige.</p>
+
+          <div class="svg-container">
+            <svg width="320" height="180" viewBox="0 0 320 180">
+              <path d="M 50,150 L 160,30 L 270,150 Z" fill="none" stroke="#f59e0b" stroke-width="4"/>
+              <line x1="160" y1="30" x2="160" y2="150" stroke="#374151" stroke-dasharray="3,3"/>
+              <path d="M 60,145 L 160,38 L 260,145" fill="none" stroke="#10b981" stroke-width="6"/>
+              <path d="M 40,155 L 160,20 L 280,155" fill="none" stroke="#3b82f6" stroke-width="8" opacity="0.5"/>
+              <rect x="80" y="125" width="80" height="10" fill="#ec4899" rx="2"/>
+              <line x1="90" y1="135" x2="90" y2="150" stroke="#ec4899" stroke-width="3"/>
+              <line x1="150" y1="135" x2="150" y2="150" stroke="#ec4899" stroke-width="3"/>
+              <text x="120" y="120" fill="#ec4899" font-size="8" font-weight="bold" text-anchor="middle">Lit Surélevé (+20cm)</text>
+              <rect x="210" y="110" width="10" height="40" fill="#374151"/>
+              <circle cx="190" cy="140" r="8" fill="#ef4444"/>
+              <text x="190" y="165" fill="#ef4444" font-size="8" font-weight="bold" text-anchor="middle">Feu Réflecteur</text>
+              <text x="160" y="15" fill="#3b82f6" font-size="8" text-anchor="middle">30cm Neige / Terre Isolante</text>
+            </svg>
+          </div>
+
+          <div class="step-box">
+            <strong>Étape 1 : Emplacement & Charpente</strong>
+            <p>Choisir un sol drainé. Charpente en A solide avec 3 grumes d'épinette (Ø 12cm minimum).</p>
+          </div>
+          <div class="step-box">
+            <strong>Étape 2 : Toiture Étanche en Sapinage</strong>
+            <p>Branches plates d'épinette/sapin orientées de bas en haut comme des bardeaux.</p>
+          </div>
+          <div class="step-box">
+            <strong>Étape 3 : Isolation Mousse & Neige</strong>
+            <p>Recouvrir d'une couche de $30\text{ cm}$ de mousse/sphaigne puis de neige (emprisonne l'air).</p>
+          </div>
+          <div class="step-box">
+            <strong>Étape 4 : Lit Surélevé & Réflecteur</strong>
+            <p>Lit à $20\text{ cm}$ du sol gelé + mur réflecteur de feu en bois vert face à l'entrée.</p>
+          </div>
+          <div class="tag-group"><span class="tag tag-orange">Abri 4 Saisons</span><span class="tag tag-success">Isolation Neige</span></div>
+        </div>
+
+        <!-- FEU HIVERNAL & ARCHET -->
+        <div class="card searchable">
+          <h2>2. Feu Hivernal & Technique de l'Archet (Bow Drill)</h2>
+          <p>Allumage garanti par friction mécanique et méthode de foyer sur neige sans perte d'énergie.</p>
+
+          <div class="svg-container">
+            <svg width="300" height="170" viewBox="0 0 300 170">
+              <path d="M 30,50 Q 80,20 150,40" fill="none" stroke="#f59e0b" stroke-width="4"/>
+              <line x1="30" y1="50" x2="150" y2="40" stroke="#3b82f6" stroke-width="2"/>
+              <rect x="80" y="30" width="10" height="90" fill="#ec4899" rx="2"/>
+              <ellipse cx="85" cy="25" rx="12" ry="6" fill="#374151"/>
+              <rect x="50" y="110" width="90" height="15" fill="#10b981" rx="2"/>
+              <path d="M 80,110 L 85,125 L 90,110 Z" fill="#0d0f12"/>
+              <circle cx="85" cy="128" r="4" fill="#ef4444"/>
+              <text x="135" y="130" fill="#ef4444" font-size="8" font-weight="bold">Braise</text>
+              <rect x="180" y="120" width="100" height="20" fill="#374151" rx="2"/>
+              <circle cx="230" cy="100" r="15" fill="#f97316"/>
+              <text x="230" y="155" fill="#3b82f6" font-size="8" text-anchor="middle">Plateforme Anti-Neige</text>
+            </svg>
+          </div>
+
+          <div class="step-box">
+            <strong>Étape 1 : Le Kit d'Archet</strong>
+            <p>Planchette en cèdre sec, drille en saule (Ø 2cm). Pression ferme avec la paume.</p>
+          </div>
+          <div class="step-box">
+            <strong>Étape 2 : Plateforme Anti-Neige</strong>
+            <p>Plancher de bûches de bois vert sous le foyer pour éviter que le feu ne coule dans la neige.</p>
+          </div>
+          <div class="step-box">
+            <strong>Étape 3 : Foyer Pyramide Inversée</strong>
+            <p>Grosses bûches en bas, petit bois d'allumage en haut. Brûle de haut en bas pendant 8h.</p>
+          </div>
+          <div class="tag-group"><span class="tag tag-orange">Bow Drill</span><span class="tag tag-danger">Feu Hivernal</span></div>
+        </div>
+
+        <!-- ROCKET STOVE -->
+        <div class="card searchable">
+          <h2>3. Cuisinière Fusée (Rocket Stove) Sauvage</h2>
+          <p>Fourneau haute efficacité : consomme 5x moins de bois, zéro fumée et concentre la chaleur sous la marmite.</p>
+
+          <div class="svg-container">
+            <svg width="280" height="180" viewBox="0 0 280 180">
+              <path d="M 60,160 L 220,160 L 200,40 L 80,40 Z" fill="#1b1f2b" stroke="#f59e0b" stroke-width="3"/>
+              <path d="M 60,120 L 150,120 L 150,40 L 120,40 L 120,100 L 60,100 Z" fill="#0d0f12" stroke="#3b82f6" stroke-width="2"/>
+              <path d="M 125,90 Q 135,50 135,35" fill="none" stroke="#ef4444" stroke-width="4"/>
+              <text x="135" y="25" fill="#ef4444" font-size="8" font-weight="bold" text-anchor="middle">Concentration (800°C)</text>
+              <line x1="30" y1="110" x2="60" y2="110" stroke="#f97316" stroke-width="4"/>
+              <text x="35" y="100" fill="#f97316" font-size="8">Air & Bois</text>
+              <rect x="110" y="32" width="50" height="5" fill="#374151"/>
+            </svg>
+          </div>
+
+          <div class="step-box">
+            <strong>Étape 1 : Conduit en L en Pierres & Argile</strong>
+            <p>Assembler un conduit en L ($90^\circ$) scellé au mortier d'argile et de sable.</p>
+          </div>
+          <div class="step-box">
+            <strong>Étape 2 : Isolation Extérieure</strong>
+            <p>Épaissir la chemise d'argile de $10\text{ cm}$ pour concentrer le tirage thermique.</p>
+          </div>
+          <div class="tag-group"><span class="tag tag-craft">Rocket Stove</span><span class="tag tag-success">Tirage Puissant</span></div>
+        </div>
+
+        <!-- ARC DE SURVIE -->
+        <div class="card searchable">
+          <h2>4. Confection d'un Arc de Survie & Flèches</h2>
+          <p>Arme de chasse d'urgence puissante ($30\text{ à }45\text{ lbs}$) fabriquée avec les essences du Québec.</p>
+
+          <div class="svg-container">
+            <svg width="300" height="160" viewBox="0 0 300 160">
+              <path d="M 30,140 Q 80,80 30,20" fill="none" stroke="#f59e0b" stroke-width="5"/>
+              <line x1="30" y1="140" x2="30" y2="20" stroke="#ec4899" stroke-width="2"/>
+              <rect x="48" y="70" width="8" height="20" fill="#374151"/>
+              <line x1="120" y1="80" x2="270" y2="80" stroke="#10b981" stroke-width="3"/>
+              <path d="M 125,75 L 140,80 L 125,85" fill="#3b82f6"/>
+              <path d="M 270,80 L 290,76 L 290,84 Z" fill="#ef4444"/>
+              <text x="280" y="98" fill="#ef4444" font-size="8" text-anchor="middle">Pointe Carbonisée</text>
+            </svg>
+          </div>
+
+          <div class="step-box">
+            <strong>Étape 1 : Ébauche en Frêne / Épinette</strong>
+            <p>Sélectionner un brin vert de $1\text{m}50$. Écorcer sans abîmer le cerne du dos.</p>
+          </div>
+          <div class="step-box">
+            <strong>Étape 2 : Équilibrage & Flèches</strong>
+            <p>Raser le ventre pour plier de façon symétrique. Flèches droites en cornouiller, pointe durcie au feu.</p>
+          </div>
+          <div class="tag-group"><span class="tag tag-purple">Arc de Survie</span><span class="tag tag-orange">Chasse</span></div>
+        </div>
+
+        <!-- ASTUCES VITALES QUÉBEC -->
+        <div class="card searchable">
+          <h2>5. Guide des Astuces Vitales - Toutes Saisons</h2>
+          <h3>❄️ Hiver (-30°C)</h3>
+          <ul>
+            <li><strong>Eau :</strong> Ne jamais manger de neige crue (hypothermie). Toujours la fondre.</li>
+            <li><strong>Pieds :</strong> Sphaigne sèche dans les bottes pour absorber la transpiration.</li>
+            <li><strong>Raquettes :</strong> Saule/cèdre tressé lié par des racines d'épinette.</li>
+          </ul>
+          <h3>🦟 Été & Automne</h3>
+          <ul>
+            <li><strong>Anti-moustiques :</strong> Fumée de chaga ou d'achillée sur les braises.</li>
+            <li><strong>Fumoir :</strong> Tipi de branches recouvert d'écorce pour conserver la viande/poisson.</li>
+          </ul>
+          <div class="tag-group"><span class="tag tag-danger">Hypothermie</span><span class="tag tag-success">Anti-Moustique</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 2 : MÉTALLURGIE & CÉRAMIQUE & CORDAGE -->
+    <section id="metallurgie-craft" class="tab-content hidden">
+      <div class="grid">
+
+        <!-- BAS FOURNEAU -->
+        <div class="card searchable">
+          <h2>1. Métallurgie de Réduction (Fer)</h2>
+          <p>Réduction directe du minerai d'hématite en loupe de fer spongieuse ($1200^\circ\text{C}-1300^\circ\text{C}$).</p>
+
+          <div class="svg-container">
+            <svg width="260" height="180" viewBox="0 0 260 180">
+              <path d="M 80,170 L 95,30 L 165,30 L 180,170 Z" fill="#222630" stroke="#9ca3af" stroke-width="3"/>
+              <ellipse cx="130" cy="110" rx="35" ry="35" fill="#f59e0b" opacity="0.3"/>
+              <circle cx="130" cy="130" r="20" fill="#ef4444" opacity="0.6"/>
+              <line x1="40" y1="120" x2="105" y2="135" stroke="#3b82f6" stroke-width="5"/>
+              <ellipse cx="130" cy="155" rx="18" ry="8" fill="#10b981"/>
+              <text x="130" y="158" fill="#ffffff" font-size="9" text-anchor="middle">Loupe Fe</text>
+              <text x="130" y="20" fill="#9ca3af" font-size="9" text-anchor="middle">Échappement CO / CO₂</text>
+            </svg>
+          </div>
+
+          <ul>
+            <li><strong>Bas fourneau :</strong> Cheminée en argile/sable (H: 1m, Ø: 30cm). Tuyère inclinée à 30°.</li>
+            <li><strong>Charge :</strong> 1:1 en poids entre charbon de bois de feuillus et minerai concassé.</li>
+            <li><strong>Extraction :</strong> Cinglage immédiat de la loupe au marteau pour expulser la scorie liquide.</li>
+          </ul>
+          <div class="tag-group"><span class="tag tag-orange">Métallurgie</span><span class="tag tag-danger">Haute Température</span></div>
+        </div>
+
+        <!-- CÉRAMIQUE FRUSTE -->
+        <div class="card searchable">
+          <h2>2. Céramique & Poterie Fruste</h2>
+          <h3>Préparation de l'argile</h3>
+          <ul>
+            <li><strong>Lévigation :</strong> Décantation dans l'eau pour éliminer les cailloux.</li>
+            <li><strong>Dégraissant :</strong> Ajouter 15% à 25% de sable quartzeux ou chamotte pour éviter le retrait.</li>
+          </ul>
+          <h3>Cuisson en Fosse (Pit Firing)</h3>
+          <p>Séchage complet obligatoire. Cuisson progressive jusqu'à 600°C - 800°C sous lit de braises pendant 24h.</p>
+          <div class="tag-group"><span class="tag tag-craft">Argile</span><span class="tag">Céramique</span></div>
+        </div>
+
+        <!-- SAVONNERIE & POTASSE -->
+        <div class="card searchable">
+          <h2>3. Savonnerie & Chimie de la Potasse</h2>
+          <h3>Lessive de cendres (KOH)</h3>
+          <p>Lixiviation de cendres de bois dur (érable, merisier). Densité cible : un œuf frais flotte en surface.</p>
+          <h3>Saponification à chaud</h3>
+          <p>Mélanger la graisse (suif/huile) à 60°C avec la lessive chaude sous agitation continue jusqu'à obtention d'une pâte gélifiée.</p>
+          <div class="tag-group"><span class="tag tag-purple">Chimie</span><span class="tag tag-success">Hygiène</span></div>
+        </div>
+
+        <!-- CORDAGE TORSADÉ -->
+        <div class="card searchable">
+          <h2>4. Confection de Cordage Torsadé Sauvage</h2>
+          <p>Fibres d'Apocyn, Ortie dioïque, Asclépiade ou Tilleul (teille/filasse).</p>
+          
+          <div class="svg-container">
+            <svg width="280" height="130" viewBox="0 0 280 130">
+              <path d="M 40,20 L 120,65 L 40,110" fill="none" stroke="#ec4899" stroke-width="4"/>
+              <path d="M 120,65 L 240,65" fill="none" stroke="#3b82f6" stroke-width="6" stroke-dasharray="8,2"/>
+              <circle cx="120" cy="65" r="5" fill="#f59e0b"/>
+              <text x="120" y="50" fill="#f59e0b" font-size="8" text-anchor="middle">Torsion Inverse</text>
+            </svg>
+          </div>
+
+          <p>Tourner les deux brins séparément dans le sens horaire, et les croiser l'un sur l'autre dans le sens anti-horaire.</p>
+          <div class="tag-group"><span class="tag tag-craft">Cordage Sauvage</span><span class="tag tag-success">Fibres</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 3 : GRAND RÉPERTOIRE FLORE DU QUÉBEC -->
+    <section id="flore-master" class="tab-content hidden">
+      <div class="card">
+        <h2>📚 Grand Répertoire Botanique du Québec</h2>
+        <p style="margin-bottom:15px;">Aide-mémoire interactif complet. Cliquez sur les filtres pour trier les espèces.</p>
+
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="filterCategory('all')">Tous</button>
+          <button class="filter-btn" onclick="filterCategory('arbre')">Arbres & Conifères</button>
+          <button class="filter-btn" onclick="filterCategory('arbuste')">Arbustes</button>
+          <button class="filter-btn" onclick="filterCategory('herbacee')">Herbacées</button>
+          <button class="filter-btn" onclick="filterCategory('fongique')">Lichens & Champignons</button>
+        </div>
+
+        <!-- CONTENEUR DÉFILEMENT PARFAIT -->
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 22%;">Espèce (Français / Latin)</th>
+                <th style="width: 12%;">Type</th>
+                <th style="width: 25%;">🛠️ Usages Artisanaux</th>
+                <th style="width: 25%;">⚕️ Usages Médicinaux</th>
+                <th style="width: 16%;">⚠️ Sécurité</th>
+              </tr>
+            </thead>
+            <tbody id="floreTable">
+
+              <tr class="searchable" data-cat="arbre">
+                <td><strong>Bouleau à papier</strong><br><em>Betula papyrifera</em></td>
+                <td><span class="tag">Arbre</span></td>
+                <td>Écorce pour canots, contenants, toitures. Pyrolyse pour colle/poix.</td>
+                <td>Hôte du Chaga. Sève reminéralisante au printemps.</td>
+                <td><span class="tag-success">SÉCURITAIRE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="arbre">
+                <td><strong>Bouleau jaune (Merisier)</strong><br><em>Betula alleghaniensis</em></td>
+                <td><span class="tag">Arbre</span></td>
+                <td>Bois très dense pour outils/manches. Écorce combustible mouillée.</td>
+                <td>Huile essentielle à salicylate de méthyle. Antalgique majeur.</td>
+                <td><span class="tag-warning">PRUDENCE (Aspirine)</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="arbre">
+                <td><strong>Sapin baumier</strong><br><em>Abies balsamea</em></td>
+                <td><span class="tag">Conifère</span></td>
+                <td>Gomme/Résine : colle, calfeutrage, baume.</td>
+                <td>Cicatrisant direct. Inhalation antiseptique respiratoire. Vitamine C.</td>
+                <td><span class="tag-success">TRÈS SÉCURITAIRE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="arbre">
+                <td><strong>Cèdre blanc (Thuja)</strong><br><em>Thuja occidentalis</em></td>
+                <td><span class="tag">Conifère</span></td>
+                <td>Bois imputrescible. Écorce interne pour cordage et tressage.</td>
+                <td>Anti-fongique puissant (verrues). Décoction anti-scorbutique.</td>
+                <td><span class="tag-danger">THUJONE TOXIQUE INTERNE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="arbre">
+                <td><strong>Épinette noire / Blanche</strong><br><em>Picea mariana/glauca</em></td>
+                <td><span class="tag">Conifère</span></td>
+                <td>Racines (Watap) pour ligatures et coudrages. Résine pour mastic.</td>
+                <td>Huile essentielle tonique surrénalienne. Tisane stimulante.</td>
+                <td><span class="tag-success">SÉCURITAIRE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="arbre">
+                <td><strong>Frêne noir</strong><br><em>Fraxinus nigra</em></td>
+                <td><span class="tag">Arbre</span></td>
+                <td>MATÉRIAU VANNERIE : Battre le bois sépare les cernes en lattes de panier.</td>
+                <td>Écorce astringente et diurétique.</td>
+                <td><span class="tag-success">SÉCURITAIRE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="arbre">
+                <td><strong>Tilleul d'Amérique</strong><br><em>Tilia americana</em></td>
+                <td><span class="tag">Arbre</span></td>
+                <td>Écorce interne (Teille) : un des MEILLEURS cordages sauvages.</td>
+                <td>Fleurs en infusion calmante et antispasmodique.</td>
+                <td><span class="tag-success">SÉCURITAIRE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="arbre">
+                <td><strong>Pruche du Canada</strong><br><em>Tsuga canadensis</em></td>
+                <td><span class="tag">Conifère</span></td>
+                <td>Écorce riche en tanins pour le tannage végétal des cuirs.</td>
+                <td>Astringent fort pour saignements et diarrhées aiguës.</td>
+                <td><span class="tag-success">SÉCURITAIRE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="arbuste">
+                <td><strong>Thé du Labrador</strong><br><em>Rhododendron groenlandicum</em></td>
+                <td><span class="tag">Arbuste</span></td>
+                <td>Plante aromatique répulsive pour insectes/mythes.</td>
+                <td>Relaxant, antiseptique respiratoire et hépatique.</td>
+                <td><span class="tag-warning">ATTENTION LEDOL</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="arbuste">
+                <td><strong>Myrique baumier</strong><br><em>Morella gale</em></td>
+                <td><span class="tag">Arbuste</span></td>
+                <td>Répulsif moustiques d'urgence (frotter les feuilles sur la peau).</td>
+                <td>Antiseptique, emménagogue, épice aromatique.</td>
+                <td><span class="tag-warning">INTERDIT ENCEINTE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="arbuste">
+                <td><strong>Saules (Osier / Discolore)</strong><br><em>Salix spp.</em></td>
+                <td><span class="tag">Arbuste</span></td>
+                <td>Tiges souples pour vannerie, pièges, paniers, raquettes.</td>
+                <td>Écorce riche en salicine (aspirine naturelle).</td>
+                <td><span class="tag-success">SÉCURITAIRE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="herbacee">
+                <td><strong>Apocyn chanvrin</strong><br><em>Apocynum cannabinum</em></td>
+                <td><span class="tag">Herbacée</span></td>
+                <td>MEILLEUR CORDAGE SAUVAGE : Fibres de haute résistance.</td>
+                <td>Aucun usage médical sécuritaire.</td>
+                <td><span class="tag-danger">TOXIQUE INGÉSTION</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="herbacee">
+                <td><strong>Ortie dioïque</strong><br><em>Urtica dioica</em></td>
+                <td><span class="tag">Herbacée</span></td>
+                <td>Fibres textiles et cordage très solide. Teinture verte.</td>
+                <td>Multi-vitaminique, hémostatique, anti-anémiante.</td>
+                <td><span class="tag-success">SÉCURITAIRE CUITE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="herbacee">
+                <td><strong>Quenouille</strong><br><em>Typha latifolia</em></td>
+                <td><span class="tag">Herbacée</span></td>
+                <td>Feuilles pour nattes. Duvet allume-feu. Rhizome = farine.</td>
+                <td>Pollen hémostatique. Cataplasme de racine pour brûlures.</td>
+                <td><span class="tag-success">EXCELLENT SURVIE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="herbacee">
+                <td><strong>Plantain majeur</strong><br><em>Plantago major</em></td>
+                <td><span class="tag">Herbacée</span></td>
+                <td>Néant.</td>
+                <td>Cataplasme N°1 contre venin de guêpes, orties et infection.</td>
+                <td><span class="tag-success">TRÈS SÉCURITAIRE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="fongique">
+                <td><strong>Usnée barbue</strong><br><em>Usnea barbata</em></td>
+                <td><span class="tag">Lichen</span></td>
+                <td>Allume-feu ultra-rapide sec. Pansement doux.</td>
+                <td>Acide usnique : ANTIBIOTIQUE naturel pour plaies.</td>
+                <td><span class="tag-success">ANTIBIOTIQUE</span></td>
+              </tr>
+
+              <tr class="searchable" data-cat="fongique">
+                <td><strong>Chaga boréal</strong><br><em>Inonotus obliquus</em></td>
+                <td><span class="tag">Champignon</span></td>
+                <td>Amadou naturel : capte l'étincelle et se consume des heures.</td>
+                <td>Antioxydant record, stimulateur du système immunitaire.</td>
+                <td><span class="tag-success">SÉCURITAIRE</span></td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4 : GALERIE BOTANIQUE D'IDENTIFICATION -->
+    <section id="galerie-botanique" class="tab-content hidden">
+      <div class="grid">
+
+        <div class="card searchable">
+          <h2>Peuplier Baumier <span><em>Populus balsamifera</em></span></h2>
+          <div class="svg-container">
+            <svg width="220" height="130" viewBox="0 0 220 130">
+              <path d="M 60,100 Q 10,60 60,10 Q 110,60 60,100 Z" fill="#10b981" opacity="0.6" stroke="#fff" stroke-width="2"/>
+              <path d="M 160,90 Q 145,50 160,20 Q 175,50 160,90 Z" fill="#f59e0b" stroke="#ef4444" stroke-width="2"/>
+              <circle cx="160" cy="75" r="6" fill="#ef4444"/>
+            </svg>
+          </div>
+          <p>Bourgeons de printemps gluants riches en résine antalgique (Baume de Galaad).</p>
+          <div class="tag-group"><span class="tag tag-success">Baume Galaad</span></div>
+        </div>
+
+        <div class="card searchable">
+          <h2>Bouleau Jaune <span><em>Betula alleghaniensis</em></span></h2>
+          <div class="svg-container">
+            <svg width="220" height="130" viewBox="0 0 220 130">
+              <rect x="40" y="15" width="60" height="90" fill="#f59e0b" opacity="0.4" rx="4"/>
+              <path d="M 35,35 C 20,30 15,45 38,50" fill="none" stroke="#f59e0b" stroke-width="2"/>
+              <line x1="140" y1="100" x2="170" y2="15" stroke="#8b5cf6" stroke-width="3"/>
+            </svg>
+          </div>
+          <p>Écorce dorée effilochée, forte odeur de wintergreen (salicylate de méthyle).</p>
+          <div class="tag-group"><span class="tag tag-purple">Salicylate</span></div>
+        </div>
+
+        <div class="card searchable">
+          <h2>Chaga Boréal <span><em>Inonotus obliquus</em></span></h2>
+          <div class="svg-container">
+            <svg width="220" height="130" viewBox="0 0 220 130">
+              <rect x="20" y="10" width="50" height="110" fill="#e5e7eb" stroke="#000" stroke-width="2"/>
+              <path d="M 70,35 C 120,25 130,85 70,95 Z" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+            </svg>
+          </div>
+          <p>Excroissance charbonneuse sur bouleau. Concentré en acide bétulinique et amadou.</p>
+          <div class="tag-group"><span class="tag tag-purple">Immuno-stimulant</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 5 : DISTILLATION & CHIMIE -->
+    <section id="modules-chimie" class="tab-content hidden">
+      <div class="grid">
+
+        <div class="card searchable">
+          <h2>1. Distillation à la Vapeur & Essencier</h2>
+          <p>Extraction des huiles essentielles et des hydrolats à partir des conifères.</p>
+          
+          <div class="svg-container">
+            <svg width="300" height="160" viewBox="0 0 300 160">
+              <rect x="20" y="100" width="50" height="45" fill="#222630" stroke="#3b82f6" stroke-width="2"/>
+              <rect x="20" y="45" width="50" height="45" fill="#10b981" opacity="0.3" stroke="#10b981" stroke-width="2"/>
+              <path d="M 45,45 L 45,20 L 150,20 L 150,55" fill="none" stroke="#9ca3af" stroke-width="3"/>
+              <rect x="135" y="55" width="30" height="55" fill="#3b82f6" opacity="0.2" stroke="#3b82f6" stroke-dasharray="2,2"/>
+              <path d="M 210,100 L 250,100 L 250,145 L 210,145 Z" fill="#1e222d" stroke="#f59e0b" stroke-width="2"/>
+              <rect x="212" y="102" width="36" height="12" fill="#f59e0b" opacity="0.8"/>
+              <rect x="212" y="114" width="36" height="29" fill="#3b82f6" opacity="0.5"/>
+            </svg>
+          </div>
+
+          <ul>
+            <li><strong>Séparation :</strong> L'huile essentielle (moins dense) flotte sur l'hydrolat.</li>
+            <li><strong>Cas Bouleau Jaune :</strong> L'huile est plus dense ($d=1.17$) et coule au FOND.</li>
+          </ul>
+          <div class="tag-group"><span class="tag tag-purple">Distillation</span></div>
+        </div>
+
+        <div class="card searchable">
+          <h2>2. Pyrolyse à Sec (Goudron de Pin/Bouleau)</h2>
+          <p>Carbonisation à $400^\circ\text{C}$ en cuve close sans oxygène pour extraire la poix et le vinaigre de bois.</p>
+          <div class="tag-group"><span class="tag tag-danger">Pyrolyse</span><span class="tag">Poix Noire</span></div>
+        </div>
+
+        <div class="card searchable">
+          <h2>3. Technique de Double Extraction</h2>
+          <p>Extraire à la fois les triterpènes lipophiles (alcool 70%) et les béta-glucanes hydrosolubles (eau chaude) des champignons.</p>
+          <div class="tag-group"><span class="tag tag-purple">Chaga</span><span class="tag tag-success">Teinture</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 6 : CALCULATEURS -->
+    <section id="calcs" class="tab-content hidden">
+      <div class="grid">
+
+        <!-- DILUTION ALCOOL -->
+        <div class="card">
+          <h2>🧪 Calculateur de Dilution Alcoolique (Pearson)</h2>
+          <div class="calc-form">
+            <div class="form-group">
+              <label>Degré d'alcool départ (% vol) :</label>
+              <input type="number" id="alcStart" value="94" oninput="calcAlcohol()">
+            </div>
+            <div class="form-group">
+              <label>Volume départ (ml) :</label>
+              <input type="number" id="volStart" value="500" oninput="calcAlcohol()">
+            </div>
+            <div class="form-group">
+              <label>Degré cible désiré (% vol) :</label>
+              <input type="number" id="alcTarget" value="70" oninput="calcAlcohol()">
+            </div>
+            <div class="result-box">
+              <div class="result-item"><span>Eau distillée à ajouter :</span> <span class="result-value" id="resWaterAdd">0 ml</span></div>
+              <div class="result-item"><span>Volume total final :</span> <span class="result-value" id="resVolFinal">0 ml</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SAPONIFICATION -->
+        <div class="card">
+          <h2>🧮 Calculateur de Saponification (Potasse)</h2>
+          <div class="calc-form">
+            <div class="form-group">
+              <label>Type de Matière Grasse :</label>
+              <select id="fatType" onchange="calculateSoap()">
+                <option value="0.198">Suif de Bœuf (Potasse KOH)</option>
+                <option value="0.194">Saindoux de Porc (Potasse KOH)</option>
+                <option value="0.190">Huile Végétale (Potasse KOH)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Poids de la Graisse (Grammes) :</label>
+              <input type="number" id="fatWeight" value="1000" oninput="calculateSoap()">
+            </div>
+            <div class="form-group">
+              <label>Pureté estimée potasse (%) :</label>
+              <input type="number" id="kohPurity" value="85" oninput="calculateSoap()">
+            </div>
+            <div class="result-box">
+              <div class="result-item"><span>Potasse artisanale (KOH) :</span> <span class="result-value" id="resKohRaw">0 g</span></div>
+              <div class="result-item"><span>Eau recommandée :</span> <span class="result-value" id="resWater">0 g</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ASSISTANT DISTILLATION -->
+        <div class="card">
+          <h2>🌡️ Assistant Coupe de Distillation</h2>
+          <div class="calc-form">
+            <div class="form-group">
+              <label>Température de tête mesurée (°C) :</label>
+              <input type="number" id="distTemp" value="65" oninput="checkDistillation()">
+            </div>
+            <div class="result-box" style="text-align:center; padding:15px;">
+              <h3 id="distStatus" style="color:var(--danger)">TÊTES : MÉTHANOL TOXIQUE</h3>
+              <p id="distAction" style="font-size:0.85rem; margin-top:5px;">REJETER IMPÉRATIVEMENT LE DISTILLAT</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 7 : TRAITÉ MÉDICAL -->
+    <section id="medical" class="tab-content hidden">
+      <div class="card">
+        <h2>⚕️ Guide d'Urgence Médicale de Terrain & Posologies</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Affections / Pathologie</th>
+                <th>Remède Boréal Première Ligne</th>
+                <th>Préparation & Posologie</th>
+                <th>Précautions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="searchable">
+                <td><strong>Infection des plaies ouvertes</strong></td>
+                <td>Usnée barbue (*Usnea barbata*) ou Résine de Sapin</td>
+                <td>Cataplasme d'usnée propre humectée. Gomme de sapin sur le contour.</td>
+                <td>Changer le pansement toutes les 12h.</td>
+              </tr>
+              <tr class="searchable">
+                <td><strong>Douleurs articulaires / Fièvre</strong></td>
+                <td>Bouleau Jaune ou Écorce de Saule</td>
+                <td>Décoction de 20g d'écorce interne pour 1L d'eau. 3 tasses/jour.</td>
+                <td>Éviter en cas d'allergie à l'aspirine.</td>
+              </tr>
+              <tr class="searchable">
+                <td><strong>Brûlures thermiques</strong></td>
+                <td>Baume de Galaad (Bourgeons de Peuplier)</td>
+                <td>Refroidir à l'eau claire 15 min, puis étaler le baume huileux.</td>
+                <td>Ne pas percer les cloques fermées.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.remove('hidden');
+      event.currentTarget.classList.add('active');
+    }
+
+    function filterContent() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const items = document.querySelectorAll('.searchable');
+
+      items.forEach(item => {
+        const text = item.innerText.toLowerCase();
+        if (text.includes(query)) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    }
+
+    function filterCategory(cat) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const rows = document.querySelectorAll('#floreTable tr');
+      rows.forEach(row => {
+        if (cat === 'all' || row.getAttribute('data-cat') === cat) {
+          row.classList.remove('hidden');
+        } else {
+          row.classList.add('hidden');
+        }
+      });
+    }
+
+    function calcAlcohol() {
+      const aStart = parseFloat(document.getElementById('alcStart').value) || 0;
+      const vStart = parseFloat(document.getElementById('volStart').value) || 0;
+      const aTarget = parseFloat(document.getElementById('alcTarget').value) || 0;
+
+      if (aTarget >= aStart || aTarget <= 0) {
+        document.getElementById('resWaterAdd').innerText = "Invalide";
+        document.getElementById('resVolFinal').innerText = "-";
+        return;
+      }
+
+      const vFinal = (vStart * aStart) / aTarget;
+      const vWater = vFinal - vStart;
+
+      document.getElementById('resWaterAdd').innerText = vWater.toFixed(0) + ' ml';
+      document.getElementById('resVolFinal').innerText = vFinal.toFixed(0) + ' ml';
+    }
+
+    function calculateSoap() {
+      const sapIndex = parseFloat(document.getElementById('fatType').value);
+      const weight = parseFloat(document.getElementById('fatWeight').value) || 0;
+      const purity = parseFloat(document.getElementById('kohPurity').value) / 100 || 0.85;
+
+      const kohPure = weight * sapIndex;
+      const kohRaw = kohPure / purity;
+      const water = weight * 0.35;
+
+      document.getElementById('resKohRaw').innerText = kohRaw.toFixed(1) + ' g';
+      document.getElementById('resWater').innerText = water.toFixed(1) + ' g';
+    }
+
+    function checkDistillation() {
+      const temp = parseFloat(document.getElementById('distTemp').value) || 0;
+      const statusEl = document.getElementById('distStatus');
+      const actionEl = document.getElementById('distAction');
+
+      if (temp < 77.5) {
+        statusEl.innerText = "TÊTES : MÉTHANOL TOXIQUE";
+        statusEl.style.color = "var(--danger)";
+        actionEl.innerText = "REJETER IMPÉRATIVEMENT LE DISTILLAT";
+      } else if (temp >= 77.5 && temp <= 85) {
+        statusEl.innerText = "CŒUR : ÉTHANOL PUR";
+        statusEl.style.color = "var(--success)";
+        actionEl.innerText = "RÉCOLTER LE DISTILLAT (BONNE QUALITÉ)";
+      } else {
+        statusEl.innerText = "QUEUES : HUILES DE FUSEL";
+        statusEl.style.color = "var(--warning)";
+        actionEl.innerText = "ARRÊTER LA DISTILLATION OU SÉPARER";
+      }
+    }
+
+    window.onload = function() {
+      calcAlcohol();
+      calculateSoap();
+      checkDistillation();
+    };
+  </script>
+</body>
+</html>
